@@ -1,0 +1,242 @@
+<html itemtype="http://schema.org/WebPage" lang="en">
+
+<head>
+    <title>Private IP checker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="title" content="URL Shortner">
+    <meta name="description" content="Forget the guesswork of checking if any given IP is private or not">
+    <meta property="og:image" content="https://www.shreyasgaonkar.com/favicon/favicon-32x32.png">
+    <meta property="og:description" content="Forget the guesswork of checking if any given IP is private or not">
+    <meta name="author" content="Shreyas Gaonkar">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/android-chrome-192x192.png" sizes="192x192" />
+    <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/favicon-16x16.png" sizes="16x16" />
+    <link rel="shortcut icon" href="https://www.shreyasgaonkar.com/favicon/favicon.ico" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <style>
+        html {
+            border: 0;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        h1,
+        h2,
+        #link,
+        a {
+            color: #c2dea0 !important;
+        }
+        
+        #urltext {
+            max-width: 250px;
+        }
+        
+        #submit {
+            background-color: #c2dea0;
+            color: #3a1e5c;
+            border-color: transparent;
+        }
+        
+        body {
+            background-color: #3a1e5c;
+        }
+        
+        .form-control:focus,
+        .btn-outline-secondary.focus,
+        .btn-outline-secondary:focus {
+            box-shadow: none !important;
+        }
+        
+        @media (max-width: 780px) {
+            html {
+                padding: 0 !important;
+            }
+            /* Hide HTTP/HTTPS sidebar on mobile*/
+            #basic-addon1 {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        html {
+            border: 0;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            felx-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        body {
+            height: fit-content;
+        }
+        
+        h1,
+        h2,
+        #link,
+        a {
+            color: #c2dea0 !important;
+        }
+        
+        #submit {
+            background-color: #c2dea0;
+            color: #3a1e5c;
+            border-color: transparent;
+        }
+        
+        body {
+            background-color: #3a1e5c;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .alert-link {
+            color: #491217 !important;
+        }
+        
+        .fade,
+        .container {
+            display: block;
+            visibility: visible;
+            opacity: 1;
+            animation: fade 1s ease-in-out;
+        }
+        
+        @keyframes fade {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var urlData = $('#urltext').val();
+
+            function runScript(e) {
+
+                if (e.keyCode == 13 && (urlData.length() > 0)) {
+                    console.log("enter pressed")
+                }
+            }
+
+            $('#submit').click(function(e) {
+                e.preventDefault();
+
+                var urlData = $('#urltext').val();
+                var headersData = {
+                    'ip': urlData
+                };
+                if (urlData.length > 1) {
+                    $.ajax({
+                        type: "POST",
+                        url: window.location.pathname,
+                        headers: headersData,
+                        contentType: "application/json",
+                        dataType: 'json',
+                        success: function(response) {
+                            console.log(response);
+                            if (response == true) {
+                                response = '<p>' + "This is a " + '<strong>' + "Private" + '</strong>' + " IP address!" + '</p>';
+                            } else {
+                                response = '<p>' + "This is " + '<strong>' + "not a Private" + '</strong>' + " IP address!" + '</p>';
+                            }
+                            var hlink = response;
+                            console.log(hlink);
+                            $('#link').html(hlink);
+                            $('.alert-success').css("display", "block");
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+                                $('.alert-danger').css("display", "block");
+                                var rbody = xhr.responseJSON;
+                                console.log(ajaxOptions);
+                                console.log(xhr.status);
+                                console.log("thrown error is " + thrownError);
+                                if (xhr.status == 403) {
+                                    alert('You shall not pass!');
+                                } else if (xhr.status == 400) {
+                                    alert('Something\'s amiss... Try again.');
+                                } else if (xhr.status == 429 && rbody.message == "Limit Exceeded") {
+                                    alert('You have exceeded the number of requests today.  Try again tomorrow.')
+                                } else if (xhr.status == 429) {
+                                    alert('You need to slowwwwww dowwwwwwwwn.')
+                                }
+                            } //end error
+                    }); //end ajax
+                } // end textLength
+                else {
+                    alert("Enter IP!");
+                }
+
+                //Copy generated URL
+
+                function myFunction() {
+                    /* Get the text field */
+                    var copyText = document.getElementById("link");
+
+                    /* Select the text field */
+                    copyText.select();
+
+                    /* Copy the text inside the text field */
+                    document.execCommand("Copy");
+
+                    /* Alert the copied text */
+                    alert("Copied the text: " + copyText.value);
+                }
+
+            }); //end click submit
+        }); //end doc ready
+    </script>
+    <div class="container">
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
+            <strong>Sweet!</strong> See the result below.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+            <strong>Umm..?!</strong> Something went wrong. <a href="." class="alert-link">Refresh?</a>.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <h1>Private IP checker</h1>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">IP:</span>
+            </div>
+            <input id="urltext" type="text" class="form-control" placeholder="Enter IP address" aria-label="Username" aria-describedby="basic-addon1">
+            <div class="input-group-append">
+                <button id="submit" class="btn btn-outline-secondary" type="button">Check!</button>
+            </div>
+        </div>
+        <div id="link"> Result will appear once you hit check!</div>
+    </div>
+    <!-- end container -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" type="text/javascript"></script>
+</body>
+
+</html>
