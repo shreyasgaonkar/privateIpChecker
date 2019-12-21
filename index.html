@@ -144,7 +144,10 @@
                 var params = (new URL(document.location)).searchParams;
                 var searchParams = new URLSearchParams(params);
                 if (searchParams.has("ip")) {
-                    $('#urltext').val(searchParams.get("ip"))
+                    $('#urltext').val(searchParams.get("ip"));
+                    setTimeout(function() {
+                        $("#submit").trigger('click');
+                    }, 250);
                 }
                 var urlData = $('#urltext').val();
 
