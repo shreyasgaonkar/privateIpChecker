@@ -4,11 +4,12 @@
         <title>Private IP checker</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="title" content="URL Shortner">
-        <meta name="description" content="Forget the guesswork of checking if any given IP is private or not">
+        <meta name="description" content="Verify if the entered IP address is private.">
         <meta property="og:image" content="https://www.shreyasgaonkar.com/favicon/favicon-32x32.png">
         <meta property="og:description" content="Forget the guesswork of checking if any given IP is private or not">
         <meta name="author" content="Shreyas Gaonkar">
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
         <!-- Favicon -->
         <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/favicon-32x32.png" sizes="32x32" />
         <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/android-chrome-192x192.png" sizes="192x192" />
@@ -75,7 +76,6 @@
     </head>
 
     <body>
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <style>
             html {
                 border: 0;
@@ -151,11 +151,13 @@
                 }
                 var urlData = $('#urltext').val();
 
-                function runScript(e) {
-                    if (e.keyCode == 13 && (urlData.length() > 0)) {
-                        console.log("enter pressed")
+                $('#urltext').on('keydown', function() {
+                    var key = event.keyCode || event.charCode;
+                    if (key == 13) {
+                        $("#submit").trigger('click');
                     }
-                }
+                });
+
                 $('#submit').click(function(e) {
                     e.preventDefault();
                     var urlData = $('#urltext').val();
@@ -170,30 +172,30 @@
                             contentType: "application/json",
                             dataType: 'json',
                             success: function(response) {
-                                console.log(response);
                                 if (response == true) {
                                     response = '<p>' + "This is a " + '<strong>' + "Private" + '</strong>' + " IP address!" + '</p>';
-                                } else {
+                                }
+                                else {
                                     response = '<p>' + "This is " + '<strong>' + "not a Private" + '</strong>' + " IP address!" + '</p>';
                                 }
                                 var hlink = response;
-                                console.log(hlink);
                                 $('#link').html(hlink);
                                 $('.alert-success').css("display", "block");
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
                                 $('.alert-danger').css("display", "block");
                                 var rbody = xhr.responseJSON;
-                                console.log(ajaxOptions);
-                                console.log(xhr.status);
                                 console.log("thrown error is " + thrownError);
                                 if (xhr.status == 403) {
                                     alert('You shall not pass!');
-                                } else if (xhr.status == 400) {
+                                }
+                                else if (xhr.status == 400) {
                                     alert('Something\'s amiss... Try again.');
-                                } else if (xhr.status == 429 && rbody.message == "Limit Exceeded") {
+                                }
+                                else if (xhr.status == 429 && rbody.message == "Limit Exceeded") {
                                     alert('You have exceeded the number of requests today. Try again tomorrow.')
-                                } else if (xhr.status == 429) {
+                                }
+                                else if (xhr.status == 429) {
                                     alert('Rate exceeded')
                                 }
                             } //end error
@@ -224,7 +226,7 @@
                 </button>
             </div>
             <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
-                <strong>Umm..?!</strong> Something went wrong. <a href="." class="alert-link">Refresh?</a>. <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <strong>Umm..?!</strong> Something went wrong. <a href="." class="alert-link" style="text-docoration: underline;">Refresh?</a> <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
