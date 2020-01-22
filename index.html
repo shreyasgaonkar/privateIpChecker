@@ -164,6 +164,16 @@
                     var headersData = {
                         'ip': urlData
                     };
+
+
+                    setTimeout(function() {
+                        var ipParams = new URLSearchParams(location.search);
+                        ipParams.set('ip', urlData);
+                        temp = location.pathname + "?" + ipParams;
+                        window.history.replaceState({}, '', temp);
+                    }, 500);
+
+
                     if (urlData.length > 1) {
                         $.ajax({
                             type: "POST",
@@ -181,6 +191,7 @@
                                 var hlink = response;
                                 $('#link').html(hlink);
                                 $('.alert-success').css("display", "block");
+
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
                                 $('.alert-danger').css("display", "block");
@@ -217,7 +228,6 @@
                     }
                 }); //end click submit
             }); //end doc ready
-
         </script>
         <div class="container">
             <div class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
